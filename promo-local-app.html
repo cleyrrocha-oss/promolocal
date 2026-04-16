@@ -1,0 +1,1625 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PromoLocal — App Protótipo</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --laranja: #FF4D00;
+    --laranja-light: #FF7A3D;
+    --amarelo: #FFD600;
+    --preto: #0D0D0D;
+    --cinza-escuro: #1A1A1A;
+    --cinza: #2E2E2E;
+    --cinza-medio: #5A5A5A;
+    --cinza-claro: #F2F2F2;
+    --branco: #FFFFFF;
+    --destaque-bg: linear-gradient(135deg, #FF4D00, #FFD600);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #111;
+    font-family: 'DM Sans', sans-serif;
+    color: var(--branco);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px 80px;
+  }
+
+  /* ===== HEADER DA PÁGINA ===== */
+  .page-header {
+    text-align: center;
+    margin-bottom: 48px;
+  }
+  .page-header h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: var(--branco);
+    letter-spacing: -1px;
+  }
+  .page-header h1 span { color: var(--laranja); }
+  .page-header p {
+    font-size: 0.95rem;
+    color: #888;
+    margin-top: 8px;
+  }
+
+  /* ===== NAV DAS TELAS ===== */
+  .screen-nav {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 36px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .screen-nav button {
+    background: var(--cinza);
+    border: none;
+    color: #aaa;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 500;
+    padding: 8px 18px;
+    border-radius: 100px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .screen-nav button.active, .screen-nav button:hover {
+    background: var(--laranja);
+    color: var(--branco);
+  }
+
+  /* ===== PHONE FRAME ===== */
+  .phone-wrap {
+    position: relative;
+    width: 375px;
+    max-width: 100%;
+  }
+  .phone-frame {
+    background: var(--cinza-escuro);
+    border-radius: 44px;
+    padding: 16px;
+    box-shadow: 0 40px 100px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.06);
+    position: relative;
+  }
+  .phone-notch {
+    width: 120px;
+    height: 30px;
+    background: var(--preto);
+    border-radius: 0 0 20px 20px;
+    margin: 0 auto 12px;
+  }
+  .phone-screen {
+    background: var(--cinza-escuro);
+    border-radius: 30px;
+    overflow: hidden;
+    height: 720px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ===== TELAS ===== */
+  .screen { display: none; flex-direction: column; height: 100%; }
+  .screen.active { display: flex; }
+
+  /* ===== STATUS BAR ===== */
+  .status-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 20px;
+    font-size: 0.7rem;
+    color: #aaa;
+    background: var(--preto);
+  }
+  .status-bar .time { font-weight: 600; color: var(--branco); }
+
+  /* ===== SCREEN: SPLASH ===== */
+  #screen-splash {
+    background: var(--preto);
+    justify-content: center;
+    align-items: center;
+  }
+  .splash-logo {
+    text-align: center;
+    animation: fadeUp 0.8s ease forwards;
+  }
+  .splash-icon {
+    width: 80px;
+    height: 80px;
+    background: var(--destaque-bg);
+    border-radius: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    font-size: 2.2rem;
+    box-shadow: 0 16px 40px rgba(255,77,0,0.4);
+  }
+  .splash-logo h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--branco);
+  }
+  .splash-logo h2 span { color: var(--laranja); }
+  .splash-logo p {
+    font-size: 0.8rem;
+    color: #666;
+    margin-top: 6px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .splash-city {
+    margin-top: 32px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    padding: 10px 24px;
+    font-size: 0.85rem;
+    color: #888;
+  }
+  .splash-city strong { color: var(--amarelo); }
+
+  /* ===== SCREEN: FEED ===== */
+  #screen-feed { background: #0D0D0D; }
+
+  .feed-header {
+    background: var(--preto);
+    padding: 14px 18px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .feed-logo {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: var(--branco);
+  }
+  .feed-logo span { color: var(--laranja); }
+  .feed-city-badge {
+    background: rgba(255,214,0,0.12);
+    border: 1px solid rgba(255,214,0,0.3);
+    color: var(--amarelo);
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 100px;
+  }
+  .feed-notif {
+    width: 32px; height: 32px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+
+  /* Categorias */
+  .categories-bar {
+    padding: 12px 0 0;
+    background: var(--preto);
+  }
+  .categories-scroll {
+    display: flex;
+    gap: 8px;
+    padding: 0 16px 12px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .categories-scroll::-webkit-scrollbar { display: none; }
+  .cat-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--cinza);
+    border: none;
+    border-radius: 100px;
+    padding: 7px 14px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s;
+    color: #aaa;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 500;
+  }
+  .cat-btn.active {
+    background: var(--laranja);
+    color: var(--branco);
+  }
+  .cat-btn .emoji { font-size: 0.9rem; }
+
+  /* Feed content */
+  .feed-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 14px 14px 80px;
+    scrollbar-width: none;
+  }
+  .feed-content::-webkit-scrollbar { display: none; }
+
+  /* Seção destaque */
+  .section-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .section-label .badge {
+    background: var(--destaque-bg);
+    color: var(--preto);
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 100px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .section-label .badge.normal {
+    background: rgba(255,255,255,0.08);
+    color: #888;
+  }
+  .section-label span {
+    font-size: 0.75rem;
+    color: #555;
+  }
+
+  /* Card Destaque */
+  .destaque-cards {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding-bottom: 4px;
+  }
+  .destaque-cards::-webkit-scrollbar { display: none; }
+
+  .card-destaque {
+    min-width: 200px;
+    background: var(--cinza);
+    border-radius: 20px;
+    overflow: hidden;
+    position: relative;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: transform 0.2s;
+  }
+  .card-destaque:hover { transform: scale(1.02); }
+  .card-destaque .badge-destaque {
+    position: absolute;
+    top: 10px; left: 10px;
+    background: var(--destaque-bg);
+    color: var(--preto);
+    font-size: 0.6rem;
+    font-weight: 800;
+    padding: 3px 8px;
+    border-radius: 100px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    z-index: 2;
+  }
+  .card-destaque .img-wrap {
+    height: 130px;
+    overflow: hidden;
+    background: #3a3a3a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+  }
+  .card-destaque .card-body {
+    padding: 12px;
+  }
+  .card-destaque .loja-nome {
+    font-size: 0.65rem;
+    color: var(--laranja);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 4px;
+  }
+  .card-destaque .prod-nome {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--branco);
+    line-height: 1.2;
+    margin-bottom: 8px;
+  }
+  .card-destaque .preco-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .card-destaque .preco {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--amarelo);
+  }
+  .card-destaque .preco-antigo {
+    font-size: 0.7rem;
+    color: #555;
+    text-decoration: line-through;
+  }
+  .card-destaque .wpp-btn {
+    width: 30px; height: 30px;
+    background: #25D366;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.9rem;
+  }
+
+  /* Cards normais — grid */
+  .cards-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .card-normal {
+    background: var(--cinza);
+    border-radius: 16px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.2s;
+  }
+  .card-normal:hover { transform: scale(1.02); }
+  .card-normal .img-wrap {
+    height: 100px;
+    background: #3a3a3a;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2.4rem;
+  }
+  .card-normal .card-body { padding: 10px; }
+  .card-normal .loja-nome {
+    font-size: 0.6rem;
+    color: var(--laranja);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 3px;
+  }
+  .card-normal .prod-nome {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--branco);
+    line-height: 1.2;
+    margin-bottom: 6px;
+  }
+  .card-normal .preco {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: var(--amarelo);
+  }
+  .card-normal .preco-antigo {
+    font-size: 0.65rem;
+    color: #555;
+    text-decoration: line-through;
+    margin-bottom: 2px;
+  }
+
+  /* Bottom nav */
+  .bottom-nav {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    background: rgba(13,13,13,0.95);
+    backdrop-filter: blur(12px);
+    border-top: 1px solid rgba(255,255,255,0.07);
+    display: flex;
+    padding: 10px 0 20px;
+  }
+  .nav-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+    opacity: 0.4;
+    transition: opacity 0.2s;
+  }
+  .nav-item.active { opacity: 1; }
+  .nav-item .nav-icon { font-size: 1.2rem; }
+  .nav-item .nav-label {
+    font-size: 0.6rem;
+    font-weight: 600;
+    color: var(--branco);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .nav-item.active .nav-icon-wrap {
+    background: var(--laranja);
+    padding: 6px 18px;
+    border-radius: 100px;
+    margin-bottom: 2px;
+  }
+
+  /* ===== SCREEN: PRODUTO ===== */
+  #screen-produto { background: #0D0D0D; }
+
+  .produto-header {
+    background: var(--preto);
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .back-btn {
+    width: 34px; height: 34px;
+    background: var(--cinza);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+  .produto-header h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+  }
+
+  .produto-img {
+    height: 240px;
+    background: var(--cinza);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 6rem;
+    position: relative;
+  }
+  .produto-badge {
+    position: absolute;
+    top: 14px; left: 14px;
+    background: var(--destaque-bg);
+    color: var(--preto);
+    font-size: 0.65rem;
+    font-weight: 800;
+    padding: 4px 12px;
+    border-radius: 100px;
+    text-transform: uppercase;
+  }
+  .produto-desconto {
+    position: absolute;
+    top: 14px; right: 14px;
+    background: var(--laranja);
+    color: var(--branco);
+    font-family: 'Syne', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 800;
+    padding: 6px 10px;
+    border-radius: 12px;
+  }
+
+  .produto-info {
+    padding: 18px;
+    flex: 1;
+    overflow-y: auto;
+    scrollbar-width: none;
+  }
+  .produto-info::-webkit-scrollbar { display: none; }
+
+  .produto-loja {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  .loja-avatar {
+    width: 32px; height: 32px;
+    background: var(--destaque-bg);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.9rem;
+    font-weight: 800;
+    color: var(--preto);
+    font-family: 'Syne', sans-serif;
+  }
+  .loja-info .nome {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--laranja);
+  }
+  .loja-info .tipo {
+    font-size: 0.68rem;
+    color: #555;
+  }
+
+  .produto-nome {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.3rem;
+    font-weight: 800;
+    line-height: 1.2;
+    margin-bottom: 6px;
+  }
+
+  .produto-cat {
+    display: inline-block;
+    background: rgba(255,255,255,0.06);
+    color: #888;
+    font-size: 0.68rem;
+    padding: 3px 10px;
+    border-radius: 100px;
+    margin-bottom: 14px;
+  }
+
+  .preco-block {
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .preco-atual {
+    font-family: 'Syne', sans-serif;
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--amarelo);
+    line-height: 1;
+  }
+  .preco-de {
+    font-size: 0.85rem;
+    color: #555;
+    text-decoration: line-through;
+    margin-bottom: 4px;
+  }
+
+  .produto-desc {
+    font-size: 0.82rem;
+    color: #888;
+    line-height: 1.6;
+    margin-bottom: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .prazo-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.75rem;
+    color: #666;
+    margin-bottom: 20px;
+  }
+  .prazo-info .dot {
+    width: 6px; height: 6px;
+    background: #4CAF50;
+    border-radius: 50%;
+  }
+
+  .wpp-cta {
+    background: #25D366;
+    color: var(--branco);
+    border: none;
+    border-radius: 16px;
+    padding: 16px;
+    width: 100%;
+    font-family: 'Syne', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: all 0.2s;
+    margin-bottom: 10px;
+  }
+  .wpp-cta:hover { opacity: 0.9; transform: scale(1.01); }
+  .compartilhar-btn {
+    background: rgba(255,255,255,0.06);
+    color: #aaa;
+    border: none;
+    border-radius: 16px;
+    padding: 12px;
+    width: 100%;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    cursor: pointer;
+  }
+
+  /* ===== SCREEN: CADASTRO VENDEDOR ===== */
+  #screen-cadastro { background: #0D0D0D; overflow: hidden; }
+
+  .cad-header {
+    background: var(--preto);
+    padding: 14px 18px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .cad-header h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+  }
+
+  .cad-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px 18px 40px;
+    scrollbar-width: none;
+  }
+  .cad-content::-webkit-scrollbar { display: none; }
+
+  .cad-titulo {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.3rem;
+    font-weight: 800;
+    margin-bottom: 4px;
+  }
+  .cad-subtitulo {
+    font-size: 0.8rem;
+    color: #666;
+    margin-bottom: 22px;
+  }
+
+  .form-group {
+    margin-bottom: 14px;
+  }
+  .form-label {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 6px;
+    display: block;
+  }
+  .form-input {
+    width: 100%;
+    background: var(--cinza);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px;
+    padding: 12px 14px;
+    color: var(--branco);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.88rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .form-input:focus { border-color: var(--laranja); }
+  .form-input::placeholder { color: #555; }
+
+  .tipo-selector {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+  .tipo-btn {
+    flex: 1;
+    background: var(--cinza);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px;
+    padding: 12px 8px;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.2s;
+    color: #888;
+  }
+  .tipo-btn.active {
+    background: rgba(255,77,0,0.15);
+    border-color: var(--laranja);
+    color: var(--laranja);
+  }
+  .tipo-btn .tipo-icon { font-size: 1.4rem; margin-bottom: 4px; }
+  .tipo-btn .tipo-nome {
+    font-size: 0.72rem;
+    font-weight: 600;
+    font-family: 'Syne', sans-serif;
+  }
+
+  .cad-btn {
+    width: 100%;
+    background: var(--laranja);
+    color: var(--branco);
+    border: none;
+    border-radius: 14px;
+    padding: 15px;
+    font-family: 'Syne', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: all 0.2s;
+  }
+  .cad-btn:hover { background: var(--laranja-light); }
+
+  /* ===== SCREEN: POSTAR PRODUTO ===== */
+  #screen-postar { background: #0D0D0D; overflow: hidden; }
+
+  .post-header {
+    background: var(--preto);
+    padding: 14px 18px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .post-header h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+  }
+
+  .post-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 18px;
+    scrollbar-width: none;
+  }
+  .post-content::-webkit-scrollbar { display: none; }
+
+  /* Upload foto */
+  .foto-upload {
+    background: var(--cinza);
+    border: 2px dashed rgba(255,255,255,0.12);
+    border-radius: 16px;
+    height: 120px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+    margin-bottom: 16px;
+    transition: border-color 0.2s;
+  }
+  .foto-upload:hover { border-color: var(--laranja); }
+  .foto-upload .upload-icon { font-size: 2rem; }
+  .foto-upload p {
+    font-size: 0.78rem;
+    color: #666;
+  }
+  .foto-upload p strong { color: var(--laranja); }
+
+  /* Tipo anúncio */
+  .anuncio-tipo {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .anuncio-card {
+    flex: 1;
+    border-radius: 14px;
+    padding: 14px 10px;
+    cursor: pointer;
+    border: 1px solid rgba(255,255,255,0.08);
+    background: var(--cinza);
+    text-align: center;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .anuncio-card.destaque-card {
+    border-color: rgba(255,214,0,0.3);
+    background: rgba(255,214,0,0.05);
+  }
+  .anuncio-card.destaque-card.selected,
+  .anuncio-card.selected {
+    border-width: 2px;
+  }
+  .anuncio-card.selected { border-color: var(--laranja); }
+  .anuncio-card.destaque-card.selected { border-color: var(--amarelo); }
+  .anuncio-card .ac-icon { font-size: 1.4rem; margin-bottom: 6px; }
+  .anuncio-card .ac-tipo {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .anuncio-card .ac-preco {
+    font-family: 'Syne', sans-serif;
+    font-size: 1rem;
+    font-weight: 800;
+    color: var(--laranja);
+  }
+  .anuncio-card.destaque-card .ac-preco { color: var(--amarelo); }
+  .anuncio-card .ac-desc {
+    font-size: 0.62rem;
+    color: #666;
+    margin-top: 2px;
+  }
+  .destaque-ribbon {
+    position: absolute;
+    top: 8px; right: -14px;
+    background: var(--amarelo);
+    color: var(--preto);
+    font-size: 0.55rem;
+    font-weight: 800;
+    padding: 2px 20px;
+    transform: rotate(30deg);
+  }
+
+  /* Pix section */
+  .pix-section {
+    background: rgba(255,77,0,0.08);
+    border: 1px solid rgba(255,77,0,0.2);
+    border-radius: 14px;
+    padding: 14px;
+    margin-top: 14px;
+  }
+  .pix-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .pix-qr {
+    background: var(--branco);
+    border-radius: 10px;
+    width: 80px; height: 80px;
+    margin: 0 auto 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.6rem;
+    color: var(--preto);
+    text-align: center;
+    line-height: 1.3;
+    font-weight: 600;
+  }
+  .pix-valor {
+    text-align: center;
+    font-family: 'Syne', sans-serif;
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: var(--laranja);
+    margin-bottom: 4px;
+  }
+  .pix-info {
+    text-align: center;
+    font-size: 0.72rem;
+    color: #666;
+  }
+  .pix-confirmar {
+    width: 100%;
+    background: var(--laranja);
+    color: var(--branco);
+    border: none;
+    border-radius: 12px;
+    padding: 13px;
+    font-family: 'Syne', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 12px;
+  }
+
+  /* ===== SCREEN: CONFIRMAÇÃO ===== */
+  #screen-confirmacao {
+    background: var(--preto);
+    justify-content: center;
+    align-items: center;
+    padding: 30px;
+    text-align: center;
+  }
+  .confirm-icon {
+    width: 80px; height: 80px;
+    background: rgba(76,175,80,0.15);
+    border: 2px solid #4CAF50;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2.5rem;
+    margin: 0 auto 20px;
+    animation: pulse 1s ease infinite;
+  }
+  .confirm-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 800;
+    margin-bottom: 8px;
+    color: var(--branco);
+  }
+  .confirm-sub {
+    font-size: 0.82rem;
+    color: #666;
+    line-height: 1.6;
+    margin-bottom: 28px;
+  }
+  .confirm-sub strong { color: var(--amarelo); }
+  .confirm-detail {
+    background: var(--cinza);
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 20px;
+    text-align: left;
+    width: 100%;
+  }
+  .confirm-detail .row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    font-size: 0.8rem;
+  }
+  .confirm-detail .row:last-child { border-bottom: none; }
+  .confirm-detail .row .label { color: #666; }
+  .confirm-detail .row .value { font-weight: 600; color: var(--branco); }
+  .confirm-detail .row .value.green { color: #4CAF50; }
+  .confirm-voltar {
+    width: 100%;
+    background: var(--laranja);
+    color: var(--branco);
+    border: none;
+    border-radius: 14px;
+    padding: 15px;
+    font-family: 'Syne', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  /* ===== SCREEN: ADMIN ===== */
+  #screen-admin { background: #0D0D0D; overflow: hidden; }
+
+  .admin-header {
+    background: var(--preto);
+    padding: 14px 18px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .admin-header h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+  }
+  .admin-badge {
+    background: var(--laranja);
+    color: var(--branco);
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 100px;
+  }
+
+  .admin-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+    scrollbar-width: none;
+  }
+  .admin-content::-webkit-scrollbar { display: none; }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .stat-card {
+    background: var(--cinza);
+    border-radius: 14px;
+    padding: 14px;
+  }
+  .stat-card .stat-icon { font-size: 1.4rem; margin-bottom: 8px; }
+  .stat-card .stat-valor {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--branco);
+  }
+  .stat-card .stat-label {
+    font-size: 0.68rem;
+    color: #666;
+    margin-top: 2px;
+  }
+  .stat-card.receita { background: rgba(255,77,0,0.12); border: 1px solid rgba(255,77,0,0.2); }
+  .stat-card.receita .stat-valor { color: var(--laranja); }
+
+  .admin-section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .anuncio-row {
+    background: var(--cinza);
+    border-radius: 12px;
+    padding: 12px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .anuncio-row .emoji { font-size: 1.4rem; }
+  .anuncio-row .info { flex: 1; }
+  .anuncio-row .info .nome {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--branco);
+  }
+  .anuncio-row .info .loja {
+    font-size: 0.7rem;
+    color: #666;
+  }
+  .anuncio-row .status {
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 100px;
+  }
+  .anuncio-row .status.ativo {
+    background: rgba(76,175,80,0.15);
+    color: #4CAF50;
+  }
+  .anuncio-row .status.destaque {
+    background: rgba(255,214,0,0.15);
+    color: var(--amarelo);
+  }
+
+  /* Animations */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(76,175,80,0.3); }
+    50% { box-shadow: 0 0 0 12px rgba(76,175,80,0); }
+  }
+
+  /* Info cards abaixo do phone */
+  .info-section {
+    width: 375px;
+    max-width: 100%;
+    margin-top: 36px;
+  }
+  .info-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 14px;
+    text-align: center;
+  }
+  .info-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .info-card {
+    background: var(--cinza-escuro);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 16px;
+    padding: 14px;
+  }
+  .info-card .ic-icon { font-size: 1.4rem; margin-bottom: 8px; }
+  .info-card .ic-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .info-card .ic-desc { font-size: 0.72rem; color: #666; line-height: 1.5; }
+</style>
+</head>
+<body>
+
+<!-- PAGE HEADER -->
+<div class="page-header">
+  <h1>Promo<span>Local</span></h1>
+  <p>Protótipo de telas — navegue pelas telas abaixo</p>
+</div>
+
+<!-- NAV -->
+<div class="screen-nav">
+  <button class="active" onclick="showScreen('splash')">Início</button>
+  <button onclick="showScreen('feed')">Feed</button>
+  <button onclick="showScreen('produto')">Produto</button>
+  <button onclick="showScreen('cadastro')">Cadastro</button>
+  <button onclick="showScreen('postar')">Postar</button>
+  <button onclick="showScreen('confirmacao')">Confirmação</button>
+  <button onclick="showScreen('admin')">Admin</button>
+</div>
+
+<!-- PHONE -->
+<div class="phone-wrap">
+  <div class="phone-frame">
+    <div class="phone-notch"></div>
+    <div class="phone-screen">
+
+      <!-- STATUS BAR -->
+      <div class="status-bar">
+        <span class="time">9:41</span>
+        <span>📶 🔋</span>
+      </div>
+
+      <!-- ===== TELA: SPLASH ===== -->
+      <div class="screen active" id="screen-splash">
+        <div style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; background:var(--preto);">
+          <div class="splash-logo">
+            <div class="splash-icon">🏷️</div>
+            <h2>Promo<span>Local</span></h2>
+            <p>Promoções da sua cidade</p>
+            <div class="splash-city">📍 Cidade: <strong>Sua cidade aqui</strong></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== TELA: FEED ===== -->
+      <div class="screen" id="screen-feed">
+        <div class="feed-header">
+          <div>
+            <div class="feed-logo">Promo<span>Local</span></div>
+          </div>
+          <div class="feed-city-badge">📍 Sua cidade</div>
+          <div class="feed-notif">🔔</div>
+        </div>
+
+        <div class="categories-bar">
+          <div class="categories-scroll">
+            <button class="cat-btn active"><span class="emoji">🔥</span> Todos</button>
+            <button class="cat-btn"><span class="emoji">👟</span> Calçados</button>
+            <button class="cat-btn"><span class="emoji">👗</span> Roupas</button>
+            <button class="cat-btn"><span class="emoji">📺</span> Eletrônicos</button>
+            <button class="cat-btn"><span class="emoji">🛋️</span> Móveis</button>
+            <button class="cat-btn"><span class="emoji">🏠</span> Outros</button>
+          </div>
+        </div>
+
+        <div class="feed-content" style="position:relative;">
+          <!-- Destaques -->
+          <div class="section-label">
+            <span class="badge">⭐ Destaques do dia</span>
+          </div>
+          <div class="destaque-cards">
+            <div class="card-destaque" onclick="showScreen('produto')">
+              <div class="badge-destaque">⭐ Destaque</div>
+              <div class="img-wrap">👟</div>
+              <div class="card-body">
+                <div class="loja-nome">Loja do João</div>
+                <div class="prod-nome">Tênis Esportivo Pro Max</div>
+                <div class="preco-wrap">
+                  <div>
+                    <div class="preco-antigo">R$ 299,00</div>
+                    <div class="preco">R$ 149,90</div>
+                  </div>
+                  <div class="wpp-btn">💬</div>
+                </div>
+              </div>
+            </div>
+            <div class="card-destaque" onclick="showScreen('produto')">
+              <div class="badge-destaque">⭐ Destaque</div>
+              <div class="img-wrap">📺</div>
+              <div class="card-body">
+                <div class="loja-nome">Eletro Casa</div>
+                <div class="prod-nome">Smart TV 40" Full HD</div>
+                <div class="preco-wrap">
+                  <div>
+                    <div class="preco-antigo">R$ 1.899,00</div>
+                    <div class="preco">R$ 999,00</div>
+                  </div>
+                  <div class="wpp-btn">💬</div>
+                </div>
+              </div>
+            </div>
+            <div class="card-destaque" onclick="showScreen('produto')">
+              <div class="badge-destaque">⭐ Destaque</div>
+              <div class="img-wrap">👗</div>
+              <div class="card-body">
+                <div class="loja-nome">Fashion Store</div>
+                <div class="prod-nome">Vestido Floral Verão</div>
+                <div class="preco-wrap">
+                  <div>
+                    <div class="preco-antigo">R$ 189,00</div>
+                    <div class="preco">R$ 79,90</div>
+                  </div>
+                  <div class="wpp-btn">💬</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Normais -->
+          <div class="section-label">
+            <span class="badge normal">📦 Mais promoções</span>
+          </div>
+          <div class="cards-grid">
+            <div class="card-normal" onclick="showScreen('produto')">
+              <div class="img-wrap">🛋️</div>
+              <div class="card-body">
+                <div class="loja-nome">Móveis Silva</div>
+                <div class="prod-nome">Sofá 3 Lugares</div>
+                <div class="preco-antigo">R$ 1.200</div>
+                <div class="preco">R$ 750,00</div>
+              </div>
+            </div>
+            <div class="card-normal" onclick="showScreen('produto')">
+              <div class="img-wrap">👞</div>
+              <div class="card-body">
+                <div class="loja-nome">Sapatos & Cia</div>
+                <div class="prod-nome">Sandália Feminina</div>
+                <div class="preco-antigo">R$ 120</div>
+                <div class="preco">R$ 59,90</div>
+              </div>
+            </div>
+            <div class="card-normal" onclick="showScreen('produto')">
+              <div class="img-wrap">🎮</div>
+              <div class="card-body">
+                <div class="loja-nome">Games & Tech</div>
+                <div class="prod-nome">Controle Xbox sem fio</div>
+                <div class="preco-antigo">R$ 350</div>
+                <div class="preco">R$ 199,00</div>
+              </div>
+            </div>
+            <div class="card-normal" onclick="showScreen('produto')">
+              <div class="img-wrap">🧥</div>
+              <div class="card-body">
+                <div class="loja-nome">Moda Atual</div>
+                <div class="prod-nome">Jaqueta Corta Vento</div>
+                <div class="preco-antigo">R$ 240</div>
+                <div class="preco">R$ 119,00</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bottom Nav -->
+        <div class="bottom-nav">
+          <div class="nav-item active">
+            <div class="nav-icon-wrap"><div class="nav-icon">🏷️</div></div>
+            <div class="nav-label">Ofertas</div>
+          </div>
+          <div class="nav-item">
+            <div class="nav-icon">🔍</div>
+            <div class="nav-label">Buscar</div>
+          </div>
+          <div class="nav-item" onclick="showScreen('postar')">
+            <div style="width:44px;height:44px;background:var(--laranja);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.4rem;margin-top:-14px;box-shadow:0 4px 16px rgba(255,77,0,0.5);">➕</div>
+            <div class="nav-label">Vender</div>
+          </div>
+          <div class="nav-item">
+            <div class="nav-icon">❤️</div>
+            <div class="nav-label">Salvos</div>
+          </div>
+          <div class="nav-item" onclick="showScreen('cadastro')">
+            <div class="nav-icon">👤</div>
+            <div class="nav-label">Perfil</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== TELA: PRODUTO ===== -->
+      <div class="screen" id="screen-produto">
+        <div class="produto-header">
+          <div class="back-btn" onclick="showScreen('feed')">←</div>
+          <h3>Detalhes do produto</h3>
+        </div>
+        <div style="flex:1; overflow-y:auto; scrollbar-width:none;">
+          <div class="produto-img">
+            👟
+            <div class="produto-badge">⭐ Destaque</div>
+            <div class="produto-desconto">-50%</div>
+          </div>
+          <div class="produto-info">
+            <div class="produto-loja">
+              <div class="loja-avatar">LJ</div>
+              <div class="loja-info">
+                <div class="nome">Loja do João</div>
+                <div class="tipo">Calçados · Loja física</div>
+              </div>
+            </div>
+            <div class="produto-nome">Tênis Esportivo Pro Max</div>
+            <span class="produto-cat">👟 Calçados</span>
+            <div class="preco-block">
+              <div class="preco-atual">R$ 149,90</div>
+              <div>
+                <div class="preco-de">de R$ 299,00</div>
+              </div>
+            </div>
+            <div class="produto-desc">
+              Tênis esportivo ideal para caminhadas e academia. Solado antiderrapante, palmilha confortável. Disponível nos tamanhos 38 ao 44. Estoque limitado!
+            </div>
+            <div class="prazo-info">
+              <div class="dot"></div>
+              Oferta válida por mais 5 dias
+            </div>
+            <button class="wpp-cta">
+              💬 Comprar pelo WhatsApp
+            </button>
+            <button class="compartilhar-btn">🔗 Compartilhar oferta</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== TELA: CADASTRO ===== -->
+      <div class="screen" id="screen-cadastro">
+        <div class="cad-header">
+          <div class="back-btn" onclick="showScreen('feed')">←</div>
+          <h3>Criar conta</h3>
+        </div>
+        <div class="cad-content">
+          <div class="cad-titulo">Quem vai anunciar?</div>
+          <div class="cad-subtitulo">Escolha o tipo de conta</div>
+
+          <div class="tipo-selector">
+            <div class="tipo-btn active">
+              <div class="tipo-icon">🏪</div>
+              <div class="tipo-nome">Comércio</div>
+            </div>
+            <div class="tipo-btn">
+              <div class="tipo-icon">👤</div>
+              <div class="tipo-nome">Pessoa física</div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Nome da loja / seu nome</label>
+            <input class="form-input" type="text" placeholder="Ex: Loja do João">
+          </div>
+          <div class="form-group">
+            <label class="form-label">CNPJ ou CPF</label>
+            <input class="form-input" type="text" placeholder="Digite seu CNPJ ou CPF">
+          </div>
+          <div class="form-group">
+            <label class="form-label">WhatsApp para contato</label>
+            <input class="form-input" type="tel" placeholder="(00) 00000-0000">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Cidade</label>
+            <input class="form-input" type="text" placeholder="Sua cidade">
+          </div>
+          <div class="form-group">
+            <label class="form-label">E-mail</label>
+            <input class="form-input" type="email" placeholder="seu@email.com">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Senha</label>
+            <input class="form-input" type="password" placeholder="Crie uma senha">
+          </div>
+          <button class="cad-btn" onclick="showScreen('postar')">Criar conta grátis →</button>
+        </div>
+      </div>
+
+      <!-- ===== TELA: POSTAR PRODUTO ===== -->
+      <div class="screen" id="screen-postar">
+        <div class="post-header">
+          <div class="back-btn" onclick="showScreen('feed')">←</div>
+          <h3>Nova promoção</h3>
+        </div>
+        <div class="post-content">
+          <div class="foto-upload">
+            <div class="upload-icon">📷</div>
+            <p><strong>Toque para adicionar fotos</strong></p>
+            <p>Máximo 5 fotos do produto</p>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Categoria</label>
+            <select class="form-input" style="appearance:none;">
+              <option>👟 Calçados</option>
+              <option>👗 Roupas</option>
+              <option>📺 Eletrônicos</option>
+              <option>🛋️ Móveis</option>
+              <option>🏠 Outros</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Nome do produto</label>
+            <input class="form-input" type="text" placeholder="Ex: Tênis Nike Air Max 36">
+          </div>
+          <div style="display:flex; gap:10px;">
+            <div class="form-group" style="flex:1;">
+              <label class="form-label">Preço original</label>
+              <input class="form-input" type="text" placeholder="R$ 0,00">
+            </div>
+            <div class="form-group" style="flex:1;">
+              <label class="form-label">Preço promocional</label>
+              <input class="form-input" type="text" placeholder="R$ 0,00">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Descrição</label>
+            <textarea class="form-input" rows="3" placeholder="Descreva o produto, tamanhos disponíveis, condição..." style="resize:none;"></textarea>
+          </div>
+
+          <!-- Tipo de anúncio -->
+          <label class="form-label" style="margin-bottom:8px; display:block;">Tipo de anúncio</label>
+          <div class="anuncio-tipo">
+            <div class="anuncio-card selected" onclick="selectTipo(this, 'normal')">
+              <div class="ac-icon">📦</div>
+              <div class="ac-tipo">Normal</div>
+              <div class="ac-preco">R$ 9,90</div>
+              <div class="ac-desc">7 dias no feed</div>
+            </div>
+            <div class="anuncio-card destaque-card" onclick="selectTipo(this, 'destaque')">
+              <div class="destaque-ribbon">TOP</div>
+              <div class="ac-icon">⭐</div>
+              <div class="ac-tipo">Destaque</div>
+              <div class="ac-preco" style="color:var(--amarelo)">R$ 35,00</div>
+              <div class="ac-desc">Posição de destaque</div>
+            </div>
+          </div>
+
+          <!-- Pix -->
+          <div class="pix-section">
+            <div class="pix-title">💳 Pague via Pix para publicar</div>
+            <div class="pix-qr">QR CODE<br>PIX<br>AQUI</div>
+            <div class="pix-valor">R$ 9,90</div>
+            <div class="pix-info">Após confirmar o pagamento,<br>seu anúncio vai ao ar automaticamente</div>
+            <button class="pix-confirmar" onclick="showScreen('confirmacao')">✅ Confirmar pagamento</button>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ===== TELA: CONFIRMAÇÃO ===== -->
+      <div class="screen" id="screen-confirmacao">
+        <div class="confirm-icon">✅</div>
+        <div class="confirm-title">Anúncio publicado!</div>
+        <div class="confirm-sub">
+          Seu produto já está no feed e pode ser visto por todos.<br>
+          Oferta válida por <strong>7 dias</strong>.
+        </div>
+        <div class="confirm-detail">
+          <div class="row">
+            <span class="label">Produto</span>
+            <span class="value">Tênis Esportivo Pro Max</span>
+          </div>
+          <div class="row">
+            <span class="label">Tipo</span>
+            <span class="value">Anúncio normal</span>
+          </div>
+          <div class="row">
+            <span class="label">Pago</span>
+            <span class="value">R$ 9,90</span>
+          </div>
+          <div class="row">
+            <span class="label">Expira em</span>
+            <span class="value">7 dias</span>
+          </div>
+          <div class="row">
+            <span class="label">Status</span>
+            <span class="value green">✅ Ativo</span>
+          </div>
+        </div>
+        <button class="confirm-voltar" onclick="showScreen('feed')">Ver no feed</button>
+      </div>
+
+      <!-- ===== TELA: ADMIN ===== -->
+      <div class="screen" id="screen-admin">
+        <div class="admin-header">
+          <h3>Painel Admin</h3>
+          <span class="admin-badge">🔐 Admin</span>
+        </div>
+        <div class="admin-content">
+          <div class="stats-grid">
+            <div class="stat-card receita">
+              <div class="stat-icon">💰</div>
+              <div class="stat-valor">R$847</div>
+              <div class="stat-label">Receita este mês</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon">📦</div>
+              <div class="stat-valor">86</div>
+              <div class="stat-label">Anúncios ativos</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon">🏪</div>
+              <div class="stat-valor">34</div>
+              <div class="stat-label">Comerciantes</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon">⭐</div>
+              <div class="stat-valor">12</div>
+              <div class="stat-label">Destaques</div>
+            </div>
+          </div>
+
+          <div class="admin-section-title">Anúncios recentes</div>
+          <div class="anuncio-row">
+            <div class="emoji">👟</div>
+            <div class="info">
+              <div class="nome">Tênis Esportivo Pro Max</div>
+              <div class="loja">Loja do João • R$ 35,00</div>
+            </div>
+            <span class="status destaque">⭐ Destaque</span>
+          </div>
+          <div class="anuncio-row">
+            <div class="emoji">📺</div>
+            <div class="info">
+              <div class="nome">Smart TV 40" Full HD</div>
+              <div class="loja">Eletro Casa • R$ 35,00</div>
+            </div>
+            <span class="status destaque">⭐ Destaque</span>
+          </div>
+          <div class="anuncio-row">
+            <div class="emoji">🛋️</div>
+            <div class="info">
+              <div class="nome">Sofá 3 Lugares</div>
+              <div class="loja">Móveis Silva • R$ 9,90</div>
+            </div>
+            <span class="status ativo">✅ Ativo</span>
+          </div>
+          <div class="anuncio-row">
+            <div class="emoji">👗</div>
+            <div class="info">
+              <div class="nome">Vestido Floral Verão</div>
+              <div class="loja">Fashion Store • R$ 35,00</div>
+            </div>
+            <span class="status destaque">⭐ Destaque</span>
+          </div>
+          <div class="anuncio-row">
+            <div class="emoji">🎮</div>
+            <div class="info">
+              <div class="nome">Controle Xbox sem fio</div>
+              <div class="loja">Games & Tech • R$ 9,90</div>
+            </div>
+            <span class="status ativo">✅ Ativo</span>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- phone-screen -->
+  </div><!-- phone-frame -->
+</div><!-- phone-wrap -->
+
+<!-- INFO SECTION -->
+<div class="info-section">
+  <div class="info-title">Funcionalidades</div>
+  <div class="info-cards">
+    <div class="info-card">
+      <div class="ic-icon">🏷️</div>
+      <div class="ic-title">Feed aberto</div>
+      <div class="ic-desc">Qualquer pessoa vê as ofertas sem precisar se cadastrar</div>
+    </div>
+    <div class="info-card">
+      <div class="ic-icon">💬</div>
+      <div class="ic-title">Compra via WhatsApp</div>
+      <div class="ic-desc">Botão direto abre o WhatsApp do vendedor</div>
+    </div>
+    <div class="info-card">
+      <div class="ic-icon">⭐</div>
+      <div class="ic-title">Destaques rotativos</div>
+      <div class="ic-desc">Ordem aleatória a cada acesso, sem favoritismo</div>
+    </div>
+    <div class="info-card">
+      <div class="ic-icon">⏱️</div>
+      <div class="ic-title">Expira em 7 dias</div>
+      <div class="ic-desc">Anúncio some automaticamente, feed sempre atualizado</div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function showScreen(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.screen-nav button').forEach(b => b.classList.remove('active'));
+    document.getElementById('screen-' + id).classList.add('active');
+    const btns = document.querySelectorAll('.screen-nav button');
+    const map = ['splash','feed','produto','cadastro','postar','confirmacao','admin'];
+    const idx = map.indexOf(id);
+    if(idx >= 0) btns[idx].classList.add('active');
+  }
+
+  function selectTipo(el, tipo) {
+    document.querySelectorAll('.anuncio-card').forEach(c => c.classList.remove('selected'));
+    el.classList.add('selected');
+    const val = document.querySelector('.pix-valor');
+    val.textContent = tipo === 'destaque' ? 'R$ 35,00' : 'R$ 9,90';
+  }
+</script>
+</body>
+</html>
